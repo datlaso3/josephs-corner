@@ -5,6 +5,7 @@ export interface DocumentRow {
   title: string;
   description: string | null;
   category: string | null;
+  subcategory: string | null;
   tags: string[] | null;
   file_path: string;
   file_type: FileType;

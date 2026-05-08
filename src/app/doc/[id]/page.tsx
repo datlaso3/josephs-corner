@@ -7,6 +7,7 @@ import { formatBytes } from "@/lib/types";
 import type { DocumentRow } from "@/lib/types";
 import { PdfPreview } from "@/components/PdfPreview";
 import { MarkdownPreview } from "@/components/MarkdownPreview";
+import QuizPanel from "@/components/QuizPanel";
 
 const STORAGE_BUCKET = "documents";
 
@@ -121,7 +122,9 @@ export default async function DocPage({ params }: { params: { id: string } }) {
         </div>
       </header>
 
-      <section>
+      <QuizPanel documentId={doc.id} fileType={doc.file_type} />
+
+      <section className="mt-8">
         {doc.file_type === "pdf" ? (
           <PdfPreview url={url} title={doc.title} />
         ) : doc.file_type === "md" ? (
