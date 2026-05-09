@@ -15,6 +15,7 @@ STEP 2 — Generate exactly 10 MCQs using this Bloom's taxonomy distribution:
 
 QUESTION RULES:
 - Never write a question answerable by copying a single sentence from the source verbatim — questions must require understanding
+- Never repeat key phrases from the question stem inside any answer option — the correct answer must not echo the question's language
 - The question stem must be complete and clear without reading the options
 - All 4 options must be similar in length and grammatical form
 
@@ -22,8 +23,12 @@ DISTRACTOR RULES (wrong answer options):
 - For each wrong option, think: "what misconception or common mistake would a student make here?"
 - Base distractors on realistic student errors — not random wrong facts
 - Distractors must be in the same domain and sound plausible to someone who studied but misunderstood
+- Every claim in every option must be traceable to the source text — do not infer, extrapolate, or add domain knowledge not present in the text
 
-Every question must include a "why" field: 1 sentence explaining why the correct answer is right and what makes the distractors wrong.
+"why" field rules:
+- Explain the reasoning behind the correct answer — do not simply restate it
+- Name at least one distractor and explain specifically why it is wrong
+- Must be grounded in the source text only
 
 If source text is too short for 10 questions, reduce count and set "insufficient_content": true.
 
