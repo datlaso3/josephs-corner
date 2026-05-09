@@ -46,8 +46,10 @@ function extractTextFromPptx(buffer: Buffer): string {
   return slideEntries
     .map((entry) => {
       const xml = entry.getData().toString("utf8");
-      return xml.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+      const matches = [...xml.matchAll(/<a:t[^>]*>([^<]+)<\/a:t>/g)];
+      return matches.map((m) => m[1]).join(" ");
     })
+    .filter((s) => s.trim())
     .join("\n");
 }
 
@@ -56,7 +58,8 @@ function extractTextFromDocx(buffer: Buffer): string {
   const entry = zip.getEntry("word/document.xml");
   if (!entry) return "";
   const xml = entry.getData().toString("utf8");
-  return xml.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  const matches = [...xml.matchAll(/<w:t[^>]*>([^<]+)<\/w:t>/g)];
+  return matches.map((m) => m[1]).join(" ");
 }
 
 function extractJson(raw: string): string {
@@ -134,9 +137,9 @@ export async function POST(request: Request) {
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: "llama-3.1-8b-instant",
-      temperature: 0.7,
-      max_tokens: 3000,
+      model: "llama-3.3-70b-versatile",
+      temperature: 0.4,
+      max_tokens: 4000,
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: `Generate a quiz from this source text:\n\n${truncated}` },

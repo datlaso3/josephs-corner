@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createClient, getAdminUser } from "@/lib/supabase/server";
 import UploadForm from "@/components/UploadForm";
 import AdminDocList from "@/components/AdminDocList";
@@ -24,11 +25,7 @@ export default async function AdminPage() {
   // here so non-admins can never see this page even if middleware is bypassed.
   const admin = await getAdminUser();
   if (!admin) {
-    return (
-      <div className="max-w-3xl mx-auto px-5 py-12 text-center text-ink-200">
-        Unauthorized.
-      </div>
-    );
+    redirect("/login");
   }
 
   const docs = await fetchDocs();
