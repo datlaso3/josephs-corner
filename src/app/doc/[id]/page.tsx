@@ -136,7 +136,7 @@ export default async function DocPage({ params }: { params: { id: string } }) {
           <GoogleDocsViewer url={url} title={doc.title} />
         ) : (
           <NoPreview
-            note={`Inline preview isn't available for ${doc.file_type.toUpperCase()} files. Use the Download button above to view in your local app.`}
+            note={`Inline preview isn't available for ${(doc.file_type as string).toUpperCase()} files. Use the Download button above to view in your local app.`}
           />
         )}
       </section>
