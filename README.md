@@ -11,6 +11,12 @@ Anyone can read. Only the configured admin can upload or delete.
 
 ---
 
+## Roadmap
+
+See [ROADMAP.md](./ROADMAP.md) for planned features and product direction.
+
+---
+
 ## Changelog
 
 ### Phase 3 — May 2026
