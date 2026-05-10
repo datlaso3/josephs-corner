@@ -127,7 +127,7 @@ export default function QuizPanel({
 
         {quiz && (
           <span className="text-xs text-ink-400">
-            {quiz.questions.length} questions · Llama 3.1 8B · Groq
+            {quiz.questions.length} questions · Llama 3.3 70B · Groq
           </span>
         )}
       </div>
@@ -206,6 +206,7 @@ function MCQCard({
               key={key}
               onClick={() => !revealed && onSelect(key)}
               disabled={revealed}
+              aria-label={`Option ${key}: ${val}`}
               className={`w-full text-left px-3 py-2 rounded-lg border text-sm transition-colors ${cls}`}
             >
               <span className="font-mono mr-2 opacity-50">{key}.</span>
@@ -218,7 +219,7 @@ function MCQCard({
       {selected && !revealed && (
         <button
           onClick={onReveal}
-          className="mt-3 text-xs text-ink-400 hover:text-white transition-colors underline underline-offset-2"
+          className="mt-3 inline-flex items-center px-3 py-1.5 rounded-md border border-ink-600 text-xs text-ink-300 hover:text-white hover:border-ink-500 transition-colors"
         >
           Check answer
         </button>

@@ -59,6 +59,7 @@ export default function StudyLayout({ docs }: Props) {
               placeholder="Search…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              aria-label="Search documents"
               className="input-base text-sm pl-8 pr-7 py-1.5"
             />
             {query && (
