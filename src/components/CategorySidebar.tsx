@@ -78,7 +78,7 @@ export default function CategorySidebar({
   const totalDocs = docs.length;
 
   return (
-    <aside className="w-60 shrink-0 flex flex-col gap-1">
+    <aside className="hidden lg:flex w-60 shrink-0 flex-col gap-1">
       {/* Search */}
       <div className="relative mb-2">
         <Search
