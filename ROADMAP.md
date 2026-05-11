@@ -4,7 +4,7 @@ A personal study platform for private tutoring students. Goal: reliable, useful 
 
 ---
 
-## Current State — Phase 3 Complete
+## Current State — Phase 4 Complete
 
 - Public document library with category sidebar and search
 - Admin upload/delete dashboard (admin-only auth)
@@ -16,19 +16,19 @@ A personal study platform for private tutoring students. Goal: reliable, useful 
 
 ---
 
-## Phase 4 — Quiz Bank Import (Next)
+## Phase 4 — Quiz Bank Import ✓ Complete
 
 **Goal:** Admin uploads an existing quiz DOCX → AI parses it into structured questions → students take an interactive quiz on the web.
 
-Planned features:
-- New upload type: "quiz bank" (separate from study documents)
-- Server-side DOCX text extraction + chunked Groq parsing into structured JSON
-- New Supabase table: `quiz_questions` (id, quiz_bank_id, question, options, correct answer, chapter)
-- Interactive quiz UI: question → student answers → reveal correct answer → final score
-- Stateless in v1 (no score saving)
-- Admin-only upload, public access to take the quiz
-
-Why Groq for parsing: handles varied question formats (numbered, lettered, tables) without brittle regex. Same free tier already in use.
+Shipped:
+- New Supabase tables: `quiz_banks` + `quiz_questions` (with RLS, public read)
+- `/api/quiz-bank/import/prepare` — extracts DOCX text, splits into 5k-char chunks, creates `quiz_bank` row
+- `/api/quiz-bank/import/chunk` — processes one chunk per call via Groq (`llama-3.1-8b-instant`), saves questions
+- Client-driven chunking with live progress bar, retry logic (3 attempts + exponential backoff), and auto-resume via localStorage if tab closes mid-import
+- `/quiz-banks` — lists all quiz banks with question counts
+- `/quiz-banks/[id]` — interactive quiz: one question at a time, answer reveal, final score, restart
+- Admin panel extended with quiz bank import form (separate from document upload)
+- Supports unlimited questions — no cap, chunks until end of document
 
 ---
 

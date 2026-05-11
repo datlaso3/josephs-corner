@@ -40,6 +40,25 @@ export function fileTypeFromName(name: string): FileType | null {
   return null;
 }
 
+export interface QuizBank {
+  id: string;
+  title: string;
+  description: string | null;
+  created_at: string;
+  question_count?: number;
+}
+
+export interface QuizQuestion {
+  id: string;
+  quiz_bank_id: string;
+  sort_order: number;
+  question: string;
+  options: { A: string; B: string; C: string; D: string };
+  correct: string;
+  explanation: string | null;
+  chapter: string | null;
+}
+
 export function formatBytes(bytes: number): string {
   if (!Number.isFinite(bytes) || bytes <= 0) return "0 B";
   const units = ["B", "KB", "MB", "GB"];

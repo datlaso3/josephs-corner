@@ -19,6 +19,15 @@ See [ROADMAP.md](./ROADMAP.md) for planned features and product direction.
 
 ## Changelog
 
+### Phase 4 — May 2026
+- Quiz bank import: admin uploads a DOCX of pre-written MCQs → AI parses into structured questions → students take interactive quiz
+- Client-driven chunked import (5k-char chunks, `llama-3.1-8b-instant`) — handles unlimited questions without hitting Vercel timeout
+- Auto-resume: localStorage persists import progress; unfinished imports resume on next admin visit
+- Retry logic: 3 attempts per chunk with exponential backoff (5s → 15s → 30s); pauses with "Accept partial" option if all retries fail
+- New Supabase tables: `quiz_banks` + `quiz_questions` (cascading delete, RLS public read)
+- `/quiz-banks` page lists all banks with live question counts
+- `/quiz-banks/[id]` interactive quiz: one question at a time, reveal correct answer, final score screen, restart
+
 ### Phase 3 — May 2026
 - Fixed PPTX/DOCX quiz extraction: switched from blind XML stripping to targeted `<a:t>` / `<w:t>` tag parsing for clean text
 - Upgraded quiz model: `llama-3.1-8b-instant` → `llama-3.3-70b-versatile` (better JSON compliance)
@@ -109,33 +118,41 @@ Open [http://localhost:3000](http://localhost:3000). Click **Admin** → sign in
 ```
 src/
   app/
-    page.tsx                   # public homepage with category sidebar
-    doc/[id]/page.tsx          # document detail (Google Docs Viewer + quiz)
-    login/page.tsx             # admin sign-in
-    admin/page.tsx             # admin dashboard (upload + list + delete)
+    page.tsx                          # public homepage with category sidebar
+    doc/[id]/page.tsx                 # document detail (Google Docs Viewer + quiz)
+    login/page.tsx                    # admin sign-in
+    admin/page.tsx                    # admin dashboard (upload + list + delete)
+    quiz-banks/
+      page.tsx                        # lists all quiz banks with question counts
+      [id]/page.tsx                   # interactive quiz page
     api/
-      upload/route.ts          # POST: server upload to Supabase Storage
-      delete/route.ts          # POST: delete a document
-      quiz/generate/route.ts   # POST: extract text + call Groq → 10 MCQs
+      upload/route.ts                 # POST: server upload to Supabase Storage
+      delete/route.ts                 # POST: delete a document
+      quiz/generate/route.ts          # POST: extract text + call Groq → 10 MCQs
+      quiz-bank/import/
+        prepare/route.ts              # POST: extract DOCX text, split chunks, create quiz_bank row
+        chunk/route.ts                # POST: parse one chunk via Groq, save questions
     layout.tsx, globals.css
   components/
-    CategorySidebar.tsx        # collapsible category/subcategory nav
-    StudyLayout.tsx            # sidebar + doc grid wrapper
-    QuizPanel.tsx              # quiz UI: generate, answer, copy
-    DocCard.tsx                # document card
-    UploadForm.tsx             # admin upload form
-    AdminDocList.tsx           # admin document list
-    MarkdownPreview.tsx        # markdown renderer
-    FileIcon.tsx               # file type badge
+    CategorySidebar.tsx               # collapsible category/subcategory nav
+    StudyLayout.tsx                   # sidebar + doc grid wrapper
+    QuizPanel.tsx                     # quiz UI: generate, answer, copy
+    QuizTaker.tsx                     # interactive quiz bank UI (answer → reveal → score)
+    QuizBankUploadForm.tsx            # admin quiz bank import form with progress + resume
+    DocCard.tsx                       # document card
+    UploadForm.tsx                    # admin document upload form
+    AdminDocList.tsx                  # admin document list
+    MarkdownPreview.tsx               # markdown renderer
+    FileIcon.tsx                      # file type badge
     SignOutButton.tsx
   lib/
-    types.ts                   # shared types + helpers
+    types.ts                          # shared types + helpers (incl. QuizBank, QuizQuestion)
     supabase/
-      client.ts                # browser Supabase client
-      server.ts                # server clients + admin checks
-      middleware.ts            # session refresh + /admin guard
-middleware.ts                  # Next.js middleware entrypoint
-supabase/schema.sql            # idempotent DB + storage setup
+      client.ts                       # browser Supabase client
+      server.ts                       # server clients + admin checks
+      middleware.ts                   # session refresh + /admin guard
+middleware.ts                         # Next.js middleware entrypoint
+supabase/schema.sql                   # idempotent DB + storage setup (incl. quiz tables)
 ```
 
 ---
