@@ -53,7 +53,7 @@ export default async function AdminPage() {
           <AdminDocList docs={docs} />
         </section>
 
-        <aside>
+        <aside className="space-y-6">
           <UploadForm knownCategories={knownCategories} />
         </aside>
       </div>

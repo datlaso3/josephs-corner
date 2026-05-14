@@ -4,31 +4,51 @@ A personal study platform for private tutoring students. Goal: reliable, useful 
 
 ---
 
-## Current State — Phase 3 Complete
+## Current State — Phase 4b Complete
 
 - Public document library with category sidebar and search
 - Admin upload/delete dashboard (admin-only auth)
 - AI quiz generation from PPTX, DOCX, MD files (10 MCQs via Groq)
 - Google Docs Viewer inline preview for PDF, PPTX, DOCX
-- Improved quiz prompt (Bloom's taxonomy + misconception-based distractors)
-- Admin page redirects to /login instead of showing "Unauthorized"
+- Quiz bank import: DOCX → chunked AI parse → interactive quiz
+- Quiz lobby with Full / Random N mode selection
+- Duolingo-style fire streak with tier-based intensity
+- Post-quiz gap analysis with AI study suggestions
+- Progress save/resume per session, best streak across sessions
 - Fully deployed on Vercel, cross-device compatible
 
 ---
 
-## Phase 4 — Quiz Bank Import (Next)
+## Phase 4b — Quiz UX & Reliability ✓ Complete
+
+Shipped:
+- Quiz lobby: question list preview + Full quiz / Random N mode selection
+- Fire streak system: 4 tiers (3/5/8/10+), pulse/glow animations, fades on wrong answer, "streak lasted X" message
+- Gap analysis: Groq analyzes wrong answers on score screen → knowledge gaps + study suggestion
+- Progress auto-saves per question; resume banner on return; best streak persists across sessions
+- Wrong answers scoped to current attempt only (gap analysis always reflects latest run, 100% scores skip it)
+- DOCX paragraph-aware extraction — chunk splits at question boundaries instead of mid-sentence
+- T/F questions: C/D set to empty string, filler options (Maybe/Unknown) eliminated
+- Import form moved to `/quiz-banks` page (admin-only, server-side gated)
+- Back navigation on quiz page and score screen
+- Orphaned 0-question banks hidden from listing
+- Chunk inter-call delay raised 2s → 8s to reduce Groq TPM failures
+
+---
+
+## Phase 4 — Quiz Bank Import ✓ Complete
 
 **Goal:** Admin uploads an existing quiz DOCX → AI parses it into structured questions → students take an interactive quiz on the web.
 
-Planned features:
-- New upload type: "quiz bank" (separate from study documents)
-- Server-side DOCX text extraction + chunked Groq parsing into structured JSON
-- New Supabase table: `quiz_questions` (id, quiz_bank_id, question, options, correct answer, chapter)
-- Interactive quiz UI: question → student answers → reveal correct answer → final score
-- Stateless in v1 (no score saving)
-- Admin-only upload, public access to take the quiz
-
-Why Groq for parsing: handles varied question formats (numbered, lettered, tables) without brittle regex. Same free tier already in use.
+Shipped:
+- New Supabase tables: `quiz_banks` + `quiz_questions` (with RLS, public read)
+- `/api/quiz-bank/import/prepare` — extracts DOCX text, splits into 5k-char chunks, creates `quiz_bank` row
+- `/api/quiz-bank/import/chunk` — processes one chunk per call via Groq (`llama-3.1-8b-instant`), saves questions
+- Client-driven chunking with live progress bar, retry logic (3 attempts + exponential backoff), and auto-resume via localStorage if tab closes mid-import
+- `/quiz-banks` — lists all quiz banks with question counts
+- `/quiz-banks/[id]` — interactive quiz: one question at a time, answer reveal, final score, restart
+- Admin panel extended with quiz bank import form (separate from document upload)
+- Supports unlimited questions — no cap, chunks until end of document
 
 ---
 

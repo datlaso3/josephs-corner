@@ -56,7 +56,47 @@ create policy "documents_bucket_public_read"
   to anon, authenticated
   using (bucket_id = 'documents');
 
--- 4. Quiz jobs table -------------------------------------------------------
+-- 4. Quiz banks table -------------------------------------------------------
+
+create table if not exists public.quiz_banks (
+  id          uuid primary key default gen_random_uuid(),
+  title       text not null,
+  description text,
+  created_at  timestamptz not null default now()
+);
+
+alter table public.quiz_banks enable row level security;
+
+drop policy if exists "quiz_banks_public_read" on public.quiz_banks;
+create policy "quiz_banks_public_read"
+  on public.quiz_banks
+  for select to anon, authenticated using (true);
+
+-- 5. Quiz questions table ----------------------------------------------------
+
+create table if not exists public.quiz_questions (
+  id           uuid primary key default gen_random_uuid(),
+  quiz_bank_id uuid not null references public.quiz_banks(id) on delete cascade,
+  sort_order   integer not null default 0,
+  question     text not null,
+  options      jsonb not null,
+  correct      text not null,
+  explanation  text,
+  chapter      text,
+  created_at   timestamptz not null default now()
+);
+
+create index if not exists quiz_questions_bank_order_idx
+  on public.quiz_questions (quiz_bank_id, sort_order);
+
+alter table public.quiz_questions enable row level security;
+
+drop policy if exists "quiz_questions_public_read" on public.quiz_questions;
+create policy "quiz_questions_public_read"
+  on public.quiz_questions
+  for select to anon, authenticated using (true);
+
+-- 6. Quiz jobs table -------------------------------------------------------
 -- Stores async quiz generation jobs. All access is via service role.
 
 create table if not exists public.quiz_jobs (
