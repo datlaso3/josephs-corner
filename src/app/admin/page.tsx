@@ -3,7 +3,6 @@ import { createClient, getAdminUser } from "@/lib/supabase/server";
 import UploadForm from "@/components/UploadForm";
 import AdminDocList from "@/components/AdminDocList";
 import SignOutButton from "@/components/SignOutButton";
-import QuizBankUploadForm from "@/components/QuizBankUploadForm";
 import type { DocumentRow } from "@/lib/types";
 
 export const revalidate = 0;
@@ -56,7 +55,6 @@ export default async function AdminPage() {
 
         <aside className="space-y-6">
           <UploadForm knownCategories={knownCategories} />
-          <QuizBankUploadForm />
         </aside>
       </div>
     </div>
