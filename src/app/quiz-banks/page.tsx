@@ -26,7 +26,9 @@ async function fetchBanks(): Promise<QuizBank[]> {
     }),
   );
 
-  return banks.map((b, i) => ({ ...b, question_count: counts[i] }));
+  return banks
+    .map((b, i) => ({ ...b, question_count: counts[i] }))
+    .filter((b) => (b.question_count ?? 0) > 0);
 }
 
 export default async function QuizBanksPage() {

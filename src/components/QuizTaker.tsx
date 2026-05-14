@@ -40,7 +40,7 @@ export default function QuizTaker({ questions, bankId, mode, resumeFrom = 0, res
   const [peakStreak, setPeakStreak] = useState(0);
   const [lastStreakEnd, setLastStreakEnd] = useState<number | null>(null);
   const [fireDying, setFireDying] = useState(false);
-  const [wrongIds, setWrongIds] = useState<string[]>(() => getWrongIds(bankId));
+  const [wrongIds, setWrongIds] = useState<string[]>([]);
   const [bestStreak] = useState(() => getBestStreak(bankId));
   const [analysis, setAnalysis] = useState<{ gaps: string[]; suggestion: string } | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
@@ -123,6 +123,7 @@ export default function QuizTaker({ questions, bankId, mode, resumeFrom = 0, res
     clearProgress(bankId);
     setAnalysis(null);
     setAnalyzing(false);
+    setWrongIds([]);
   }
 
   const fire = getFireStyle(streak);
@@ -231,7 +232,7 @@ export default function QuizTaker({ questions, bankId, mode, resumeFrom = 0, res
       <div className="w-full bg-ink-800 rounded-full h-1">
         <div
           className="bg-accent h-1 rounded-full transition-all"
-          style={{ width: `${(index / questions.length) * 100}%` }}
+          style={{ width: `${((index + (checked ? 1 : 0)) / questions.length) * 100}%` }}
         />
       </div>
 

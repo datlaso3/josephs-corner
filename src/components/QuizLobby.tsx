@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Flame, Shuffle, ListOrdered, BookOpen } from "lucide-react";
+import { Shuffle, ListOrdered, BookOpen } from "lucide-react";
 import type { QuizQuestion } from "@/lib/types";
 import { getProgress, clearProgress } from "@/lib/quizStorage";
 import QuizTaker from "./QuizTaker";
 
 interface Props {
   bankId: string;
-  bankTitle: string;
   questions: QuizQuestion[];
 }
 
@@ -21,7 +20,7 @@ function shuffleAndPick(arr: QuizQuestion[], n: number): QuizQuestion[] {
   return copy.slice(0, n);
 }
 
-export default function QuizLobby({ bankId, bankTitle, questions }: Props) {
+export default function QuizLobby({ bankId, questions }: Props) {
   const [mode, setMode] = useState<"lobby" | "full" | "random">("lobby");
   const [activeQuestions, setActiveQuestions] = useState<QuizQuestion[]>([]);
   const [resumable, setResumable] = useState<{ index: number; score: number; mode: "full" | "random"; questionIds: string[] } | null>(null);
@@ -108,7 +107,9 @@ export default function QuizLobby({ bankId, bankTitle, questions }: Props) {
           className="flex flex-col items-center gap-2 p-5 rounded-xl border border-ink-700 bg-ink-900/40 hover:bg-ink-800/60 hover:border-ink-600 transition-colors group"
         >
           <Shuffle size={22} className="text-accent group-hover:scale-110 transition-transform" />
-          <span className="font-medium text-ink-50 text-sm">Random 20</span>
+          <span className="font-medium text-ink-50 text-sm">
+            Random {Math.min(20, questions.length)}
+          </span>
           <span className="text-xs text-ink-500">shuffled each time</span>
         </button>
       </div>

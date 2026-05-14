@@ -9,8 +9,14 @@ function extractTextFromDocx(buffer: Buffer): string {
   const entry = zip.getEntry("word/document.xml");
   if (!entry) return "";
   const xml = entry.getData().toString("utf8");
-  const matches = [...xml.matchAll(/<w:t[^>]*>([^<]+)<\/w:t>/g)];
-  return matches.map((m) => m[1]).join(" ");
+  const paragraphs: string[] = [];
+  const paraMatches = [...xml.matchAll(/<w:p[ >][\s\S]*?<\/w:p>/g)];
+  for (const para of paraMatches) {
+    const runs = [...para[0].matchAll(/<w:t[^>]*>([^<]+)<\/w:t>/g)];
+    const text = runs.map((m) => m[1]).join("").trim();
+    if (text) paragraphs.push(text);
+  }
+  return paragraphs.join("\n");
 }
 
 function splitIntoChunks(text: string, chunkSize = 5000): string[] {

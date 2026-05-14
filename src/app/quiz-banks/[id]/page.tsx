@@ -58,7 +58,7 @@ export default async function QuizBankPage({ params }: { params: { id: string } 
           No questions found in this quiz bank.
         </div>
       ) : (
-        <QuizLobby bankId={bank.id} bankTitle={bank.title} questions={questions} />
+        <QuizLobby bankId={bank.id} questions={questions} />
       )}
     </div>
   );
