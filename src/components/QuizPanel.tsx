@@ -67,14 +67,16 @@ export default function QuizPanel({
       if (!startRes.ok) throw new Error(startData.error ?? "Failed to start quiz");
 
       const { jobId } = startData;
+      const deadline = Date.now() + 90_000;
 
-      while (true) {
+      while (Date.now() < deadline) {
         await new Promise((r) => setTimeout(r, 2000));
         const statusRes = await fetch(`/api/quiz/status/${jobId}`);
         const statusData = await statusRes.json();
         if (!statusRes.ok) throw new Error(statusData.error ?? "Failed to check status");
         if (statusData.status === "done") { setQuiz(statusData.result); break; }
         if (statusData.status === "error") throw new Error(statusData.error ?? "Quiz generation failed");
+        if (Date.now() >= deadline) throw new Error("Quiz generation timed out — the file may be too large. Try again.");
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to generate quiz");

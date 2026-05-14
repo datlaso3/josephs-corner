@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { waitUntil } from "@vercel/functions";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { processQuiz } from "@/lib/quiz-processor";
 
@@ -31,7 +30,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Failed to create job" }, { status: 500 });
   }
 
-  waitUntil(processQuiz(job.id, documentId));
+  await processQuiz(job.id, documentId);
 
   return NextResponse.json({ jobId: job.id });
 }
