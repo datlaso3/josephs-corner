@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { QuizQuestion } from "@/lib/types";
-import { CheckCircle2, XCircle, ChevronRight, RotateCcw } from "lucide-react";
+import { CheckCircle2, XCircle, ChevronRight, RotateCcw, ChevronLeft } from "lucide-react";
 
 const OPTION_KEYS = ["A", "B", "C", "D"] as const;
 
@@ -56,6 +57,13 @@ export default function QuizTaker({ questions }: { questions: QuizQuestion[] }) 
           <RotateCcw size={15} />
           Try again
         </button>
+        <Link
+          href="/quiz-banks"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-ink-700 text-ink-300 font-medium text-sm hover:bg-ink-800 transition-colors"
+        >
+          <ChevronLeft size={15} />
+          All quizzes
+        </Link>
       </div>
     );
   }

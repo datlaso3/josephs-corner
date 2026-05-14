@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { QuizBank, QuizQuestion } from "@/lib/types";
@@ -35,6 +37,14 @@ export default async function QuizBankPage({ params }: { params: { id: string } 
 
   return (
     <div className="max-w-3xl mx-auto px-5 py-10">
+      <Link
+        href="/quiz-banks"
+        className="inline-flex items-center gap-1 text-sm text-ink-400 hover:text-ink-200 transition-colors mb-6"
+      >
+        <ChevronLeft size={15} />
+        Quiz Banks
+      </Link>
+
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-ink-50">{bank.title}</h1>
         {bank.description && (

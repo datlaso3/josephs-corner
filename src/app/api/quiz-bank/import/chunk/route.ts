@@ -4,11 +4,13 @@ import { getAdminUser, createServiceRoleClient } from "@/lib/supabase/server";
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
-const PARSE_PROMPT = `You are a quiz parser. Extract ALL multiple-choice questions from the text below.
+const PARSE_PROMPT = `You are a quiz parser. Extract ALL questions from the text below.
 
 Rules:
 - Extract questions exactly as written — do not rephrase or improve them
-- Each question must have exactly 4 options labeled A, B, C, D
+- For True/False questions: set A to "True", B to "False", C to "", D to ""
+- For multiple-choice questions: fill A, B, C, D with the actual options
+- Never invent or pad options — if only 2 options exist, leave C and D as empty strings
 - Detect the correct answer from: inline markers (*, ✓, (correct)), answer lines ("Answer: B"), or answer keys
 - If correct answer is undetectable, set "correct": "A"
 - Set "chapter" to the nearest section/chapter heading above the question, or null
@@ -17,7 +19,7 @@ Rules:
 - If no questions found in this section, return empty array
 
 Respond with ONLY valid JSON — no prose, no markdown fences:
-{"questions":[{"sort_order":1,"question":"string","options":{"A":"string","B":"string","C":"string","D":"string"},"correct":"A","explanation":null,"chapter":null}]}`;
+{"questions":[{"sort_order":1,"question":"string","options":{"A":"string","B":"string","C":"","D":""},"correct":"A","explanation":null,"chapter":null}]}`;
 
 function extractJson(raw: string): string {
   let cleaned = raw
