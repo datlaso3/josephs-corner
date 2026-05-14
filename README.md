@@ -19,6 +19,20 @@ See [ROADMAP.md](./ROADMAP.md) for planned features and product direction.
 
 ## Changelog
 
+### Phase 4b — May 2026
+- Quiz lobby: question list preview + "Full quiz" / "Random N" mode selection before starting
+- Duolingo-style fire streak: appears at 3 correct in a row, grows and pulses at 5/8/10+, fades on wrong answer; "streak lasted X" message on miss
+- Gap analysis: after quiz, Groq (`llama-3.3-70b-versatile`) analyzes wrong answers → "Study focus" card with knowledge gaps + study suggestion
+- Quiz progress auto-saves per question to localStorage; resume banner on return
+- Best streak persists across sessions per quiz bank
+- Wrong answers scoped to current attempt — gap analysis always reflects latest run
+- Quiz import form moved from Admin page to `/quiz-banks` (admin-only, server-side gated)
+- DOCX extraction now preserves paragraph boundaries for correct chunk splitting
+- T/F questions no longer get hallucinated filler options (C/D set to empty)
+- Back navigation added to quiz page and score screen
+- Orphaned 0-question banks hidden from listing
+- Chunk delay raised 2s → 8s to reduce Groq TPM rate limit failures
+
 ### Phase 4 — May 2026
 - Quiz bank import: admin uploads a DOCX of pre-written MCQs → AI parses into structured questions → students take interactive quiz
 - Client-driven chunked import (5k-char chunks, `llama-3.1-8b-instant`) — handles unlimited questions without hitting Vercel timeout
@@ -129,6 +143,7 @@ src/
       upload/route.ts                 # POST: server upload to Supabase Storage
       delete/route.ts                 # POST: delete a document
       quiz/generate/route.ts          # POST: extract text + call Groq → 10 MCQs
+      quiz/analyze/route.ts           # POST: send wrong answers to Groq → gaps + study suggestion
       quiz-bank/import/
         prepare/route.ts              # POST: extract DOCX text, split chunks, create quiz_bank row
         chunk/route.ts                # POST: parse one chunk via Groq, save questions
@@ -137,7 +152,8 @@ src/
     CategorySidebar.tsx               # collapsible category/subcategory nav
     StudyLayout.tsx                   # sidebar + doc grid wrapper
     QuizPanel.tsx                     # quiz UI: generate, answer, copy
-    QuizTaker.tsx                     # interactive quiz bank UI (answer → reveal → score)
+    QuizLobby.tsx                     # quiz bank lobby: question list + Full/Random mode picker
+    QuizTaker.tsx                     # interactive quiz: fire streak, progress save, gap analysis trigger
     QuizBankUploadForm.tsx            # admin quiz bank import form with progress + resume
     DocCard.tsx                       # document card
     UploadForm.tsx                    # admin document upload form
@@ -147,6 +163,7 @@ src/
     SignOutButton.tsx
   lib/
     types.ts                          # shared types + helpers (incl. QuizBank, QuizQuestion)
+    quizStorage.ts                    # localStorage abstraction for quiz progress/streaks (Phase 5: swap to Supabase)
     supabase/
       client.ts                       # browser Supabase client
       server.ts                       # server clients + admin checks

@@ -4,15 +4,35 @@ A personal study platform for private tutoring students. Goal: reliable, useful 
 
 ---
 
-## Current State — Phase 4 Complete
+## Current State — Phase 4b Complete
 
 - Public document library with category sidebar and search
 - Admin upload/delete dashboard (admin-only auth)
 - AI quiz generation from PPTX, DOCX, MD files (10 MCQs via Groq)
 - Google Docs Viewer inline preview for PDF, PPTX, DOCX
-- Improved quiz prompt (Bloom's taxonomy + misconception-based distractors)
-- Admin page redirects to /login instead of showing "Unauthorized"
+- Quiz bank import: DOCX → chunked AI parse → interactive quiz
+- Quiz lobby with Full / Random N mode selection
+- Duolingo-style fire streak with tier-based intensity
+- Post-quiz gap analysis with AI study suggestions
+- Progress save/resume per session, best streak across sessions
 - Fully deployed on Vercel, cross-device compatible
+
+---
+
+## Phase 4b — Quiz UX & Reliability ✓ Complete
+
+Shipped:
+- Quiz lobby: question list preview + Full quiz / Random N mode selection
+- Fire streak system: 4 tiers (3/5/8/10+), pulse/glow animations, fades on wrong answer, "streak lasted X" message
+- Gap analysis: Groq analyzes wrong answers on score screen → knowledge gaps + study suggestion
+- Progress auto-saves per question; resume banner on return; best streak persists across sessions
+- Wrong answers scoped to current attempt only (gap analysis always reflects latest run, 100% scores skip it)
+- DOCX paragraph-aware extraction — chunk splits at question boundaries instead of mid-sentence
+- T/F questions: C/D set to empty string, filler options (Maybe/Unknown) eliminated
+- Import form moved to `/quiz-banks` page (admin-only, server-side gated)
+- Back navigation on quiz page and score screen
+- Orphaned 0-question banks hidden from listing
+- Chunk inter-call delay raised 2s → 8s to reduce Groq TPM failures
 
 ---
 
