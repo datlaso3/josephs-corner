@@ -56,6 +56,21 @@ create policy "documents_bucket_public_read"
   to anon, authenticated
   using (bucket_id = 'documents');
 
+-- 4. Quiz jobs table -------------------------------------------------------
+-- Stores async quiz generation jobs. All access is via service role.
+
+create table if not exists public.quiz_jobs (
+  id          uuid primary key default gen_random_uuid(),
+  document_id uuid not null references public.documents(id) on delete cascade,
+  status      text not null default 'pending' check (status in ('pending', 'done', 'error')),
+  result      jsonb,
+  error       text,
+  created_at  timestamptz not null default now()
+);
+
+create index if not exists quiz_jobs_document_id_idx
+  on public.quiz_jobs (document_id);
+
 -- =====================================================================
 -- That's it. The Next.js app talks to this schema via:
 --   * anon key  -> public reads (homepage, doc page)

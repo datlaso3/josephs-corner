@@ -58,14 +58,24 @@ export default function QuizPanel({
     setAnswers({});
     setRevealed({});
     try {
-      const res = await fetch("/api/quiz/generate", {
+      const startRes = await fetch("/api/quiz/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ documentId }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Unknown error");
-      setQuiz(data);
+      const startData = await startRes.json();
+      if (!startRes.ok) throw new Error(startData.error ?? "Failed to start quiz");
+
+      const { jobId } = startData;
+
+      while (true) {
+        await new Promise((r) => setTimeout(r, 2000));
+        const statusRes = await fetch(`/api/quiz/status/${jobId}`);
+        const statusData = await statusRes.json();
+        if (!statusRes.ok) throw new Error(statusData.error ?? "Failed to check status");
+        if (statusData.status === "done") { setQuiz(statusData.result); break; }
+        if (statusData.status === "error") throw new Error(statusData.error ?? "Quiz generation failed");
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to generate quiz");
     } finally {
