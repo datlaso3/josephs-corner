@@ -146,7 +146,7 @@ export default function QuizBankUploadForm() {
           ...p,
           statusLine: `Chunk ${i + 1} done — preparing next…`,
         }));
-        await sleep(2000);
+        await sleep(8000);
       }
     }
 

@@ -3,7 +3,7 @@ import { ChevronLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { QuizBank, QuizQuestion } from "@/lib/types";
-import QuizTaker from "@/components/QuizTaker";
+import QuizLobby from "@/components/QuizLobby";
 
 export const revalidate = 0;
 
@@ -58,7 +58,7 @@ export default async function QuizBankPage({ params }: { params: { id: string } 
           No questions found in this quiz bank.
         </div>
       ) : (
-        <QuizTaker questions={questions} />
+        <QuizLobby bankId={bank.id} bankTitle={bank.title} questions={questions} />
       )}
     </div>
   );
