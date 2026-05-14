@@ -19,6 +19,10 @@ See [ROADMAP.md](./ROADMAP.md) for planned features and product direction.
 
 ## Changelog
 
+### Phase 4c — May 2026
+- Switched PPTX/DOCX preview from Google Docs Viewer → Microsoft Office Online (`view.officeapps.live.com`) — more reliable for Office files
+- Switched PDF preview to direct browser iframe (native rendering, no third-party dependency)
+
 ### Phase 4b — May 2026
 - Quiz lobby: question list preview + "Full quiz" / "Random N" mode selection before starting
 - Duolingo-style fire streak: appears at 3 correct in a row, grows and pulses at 5/8/10+, fades on wrong answer; "streak lasted X" message on miss

@@ -133,7 +133,7 @@ export default async function DocPage({ params }: { params: { id: string } }) {
             <NoPreview note="Couldn't load the markdown source. Use Download to grab the file." />
           )
         ) : doc.file_type === "pdf" || doc.file_type === "pptx" || doc.file_type === "docx" ? (
-          <GoogleDocsViewer url={url} title={doc.title} />
+          <FileViewer url={url} title={doc.title} fileType={doc.file_type} />
         ) : (
           <NoPreview
             note={`Inline preview isn't available for ${(doc.file_type as string).toUpperCase()} files. Use the Download button above to view in your local app.`}
@@ -144,11 +144,14 @@ export default async function DocPage({ params }: { params: { id: string } }) {
   );
 }
 
-function GoogleDocsViewer({ url, title }: { url: string; title: string }) {
-  const src = `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
+function FileViewer({ url, title, fileType }: { url: string; title: string; fileType: string }) {
+  const src =
+    fileType === "pdf"
+      ? url
+      : `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
   return (
     <div className="rounded-xl overflow-hidden border border-ink-700 bg-ink-800 h-[80vh]">
-      <iframe src={src} title={title} className="w-full h-full" />
+      <iframe src={src} title={title} className="w-full h-full" allowFullScreen />
     </div>
   );
 }
