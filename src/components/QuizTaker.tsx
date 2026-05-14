@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import type { QuizQuestion } from "@/lib/types";
-import { CheckCircle2, XCircle, ChevronRight, RotateCcw, ChevronLeft, Flame } from "lucide-react";
+import { CheckCircle2, XCircle, ChevronRight, RotateCcw, ChevronLeft, Flame, Loader2 } from "lucide-react";
 import {
   saveProgress,
   clearProgress,
@@ -42,6 +42,8 @@ export default function QuizTaker({ questions, bankId, mode, resumeFrom = 0, res
   const [fireDying, setFireDying] = useState(false);
   const [wrongIds, setWrongIds] = useState<string[]>(() => getWrongIds(bankId));
   const [bestStreak] = useState(() => getBestStreak(bankId));
+  const [analysis, setAnalysis] = useState<{ gaps: string[]; suggestion: string } | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
   const OPTION_KEYS = ["A", "B", "C", "D"] as const;
 
   const q = questions[index];
@@ -59,6 +61,20 @@ export default function QuizTaker({ questions, bankId, mode, resumeFrom = 0, res
       });
     }
   }, [index]);
+
+  useEffect(() => {
+    if (!done || wrongIds.length === 0) return;
+    const wrongQuestions = questions.filter((q) => wrongIds.includes(q.id));
+    setAnalyzing(true);
+    fetch("/api/quiz/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ wrong_questions: wrongQuestions, total: questions.length, correct: score }),
+    })
+      .then((r) => r.json())
+      .then((d) => { setAnalysis(d); setAnalyzing(false); })
+      .catch(() => setAnalyzing(false));
+  }, [done]);
 
   function handleCheck() {
     if (!selected) return;
@@ -105,6 +121,8 @@ export default function QuizTaker({ questions, bankId, mode, resumeFrom = 0, res
     setPeakStreak(0);
     setLastStreakEnd(null);
     clearProgress(bankId);
+    setAnalysis(null);
+    setAnalyzing(false);
   }
 
   const fire = getFireStyle(streak);
@@ -130,6 +148,35 @@ export default function QuizTaker({ questions, bankId, mode, resumeFrom = 0, res
           <p className="text-xs text-ink-500">All-time best: {bestStreak} 🔥</p>
         )}
 
+        {wrongIds.length > 0 && (
+          <div className="w-full max-w-sm text-left">
+            {analyzing ? (
+              <div className="flex items-center gap-2 text-xs text-ink-400 px-3 py-2.5 rounded-lg bg-ink-900/40 border border-ink-800">
+                <Loader2 size={12} className="animate-spin shrink-0" />
+                Analyzing your results…
+              </div>
+            ) : analysis && (analysis.gaps.length > 0 || analysis.suggestion) ? (
+              <div className="p-4 rounded-xl border border-ink-700 bg-ink-900/40 space-y-3">
+                <p className="text-[11px] font-medium text-ink-400 uppercase tracking-wider">Study focus</p>
+                {analysis.gaps.length > 0 && (
+                  <ul className="space-y-1.5">
+                    {analysis.gaps.map((gap, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-ink-200">
+                        <span className="text-accent shrink-0 mt-0.5">•</span>
+                        {gap}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {analysis.suggestion && (
+                  <p className="text-xs text-ink-400 leading-relaxed border-t border-ink-800 pt-3">
+                    {analysis.suggestion}
+                  </p>
+                )}
+              </div>
+            ) : null}
+          </div>
+        )}
         <div className="flex gap-2 mt-2">
           <button
             onClick={handleRestart}
