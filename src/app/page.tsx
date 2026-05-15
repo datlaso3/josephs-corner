@@ -2,7 +2,7 @@ import StudyLayout from "@/components/StudyLayout";
 import { createClient } from "@/lib/supabase/server";
 import type { DocumentRow } from "@/lib/types";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 async function fetchDocs(): Promise<DocumentRow[]> {
   const supabase = createClient();
