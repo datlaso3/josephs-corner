@@ -1,6 +1,15 @@
 import AdmZip from "adm-zip";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 
+// Direct path import avoids Next.js test-file loading issue with pdf-parse
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const pdfParse = require("pdf-parse/lib/pdf-parse.js");
+
+async function extractTextFromPdf(buffer: Buffer): Promise<string> {
+  const data = await pdfParse(buffer);
+  return data.text ?? "";
+}
+
 const SYSTEM_PROMPT = `You are a university-level course instructor and expert assessment designer. Generate a rigorous 10-question MCQ quiz STRICTLY from the provided source text. Do not use outside knowledge or hallucinate facts.
 
 STEP 1 — Before writing questions, internally identify the 10 most important testable concepts spread across the FULL document, not just the beginning.
@@ -115,8 +124,10 @@ export async function processQuiz(jobId: string, documentId: string): Promise<vo
       text = extractTextFromPptx(buffer);
     } else if (doc.file_type === "docx") {
       text = extractTextFromDocx(buffer);
+    } else if (doc.file_type === "pdf") {
+      text = await extractTextFromPdf(buffer);
     } else {
-      await markError(service, jobId, "Quiz generation not supported for PDF. Upload PPTX, DOCX, or MD.");
+      await markError(service, jobId, "Unsupported file type.");
       return;
     }
 

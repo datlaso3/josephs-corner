@@ -39,7 +39,7 @@ export default function QuizPanel({
   const [revealed, setRevealed] = useState<Record<number, boolean>>({});
   const [copied, setCopied] = useState(false);
 
-  const unsupported = fileType === "pdf";
+  const unsupported = false; // PDF now supported via pdf-parse
 
   // Cycle stepper text while loading
   useEffect(() => {
