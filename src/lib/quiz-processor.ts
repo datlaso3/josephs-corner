@@ -1,9 +1,7 @@
 import AdmZip from "adm-zip";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 
-// Direct path import avoids Next.js test-file loading issue with pdf-parse
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const pdfParse = require("pdf-parse/lib/pdf-parse.js");
+import pdfParse from "pdf-parse";
 
 async function extractTextFromPdf(buffer: Buffer): Promise<string> {
   const data = await pdfParse(buffer);
